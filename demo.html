@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Image Replacement</title>
+<style>
+body,ul,li,p,span,dl,dt,dd,img,table,th,td{
+	margin:0;
+	padding:0;
+	font-weight:400;
+	font-family:宋体,"MS UI Gothic",Arial, sans-serif,Verdana;/*中国語*/
+	font-size:12px;
+	color:#FFF;
+}
+h1,h2,h3,h4,h5,h6{
+	padding:0;
+	margin:0;
+	font-style:normal;
+	font-weight:400;
+}
+ul,li,ol{
+	list-style:none;
+}
+pre,form,fieldset,input,textarea,select,option,label{
+	padding:0;
+	margin:0;
+	font-style:normal;
+	font-weight:400;
+}
+a,a:hover{
+	font-size:12px;
+	color:#FAA3D3;
+	text-decoration:none;
+}
+span,img{
+	display:block;
+}
+img{
+	border:none 0;
+}
+table{
+	border-spacing:0;
+	border-collapse:collapse;
+}
+.fleft{
+	float:left;
+}
+.fright{
+	float:right;
+}
+
+#snapDetail{
+	margin:10px auto;
+	width:650px;
+	overflow:hidden;
+	padding:10px;
+	border:2px solid #369;
+}
+#snapDetail ul{
+	width:330px;
+	float:left;
+	padding-left:10px;
+}
+#snapDetail li,#snapDetail li.odd{
+	width:90px;
+	height:135px;
+	border:5px solid #FFF;
+	float:left;
+	margin-right:10px;
+	margin-bottom:10px;
+}
+#snapDetail li.over{
+	border:5px solid #FCA2D2;
+}
+#snapDetail p{
+	width:300px;
+	border:5px solid #FFF;
+	float:left;
+}
+#snapDetail li:hover{
+	border:5px solid #FCA2D2;
+}
+</style>
+</head>
+<body>
+<div id="snapDetail">
+<p><img src="../conew_1-1b.jpg" width="300" height="450" alt="" id="showImg" /></p>
+<ul id="pics">
+<li><a href="../conew_1-1b.jpg"><img src="../conew_1-1bs.jpg" width="90" height="135" alt="" /></a></li>
+<li><a href="../conew_1-2b.jpg"><img src="../conew_1-2bs.jpg" width="90" height="135" alt="" /></a></li>
+<li><a href="../conew_1-3b.jpg"><img src="../conew_1-3bs.jpg" width="90" height="135" alt="" /></a></li>
+<li><a href="../conew_1-4b.jpg"><img src="../conew_1-4bs.jpg" width="90" height="135" alt="" /></a></li>
+<li><a href="../conew_1-5b.jpg"><img src="../conew_1-5bs.jpg" width="90" height="135" alt="" /></a></li>
+</ul>
+</div>
+<script>
+addDOMLoadEvent(function(){
+	showImg("pics","showImg");
+});
+var showImg = function(id,name){
+	var myId = getid(id);
+	clean(myId);
+	addClass(myId.firstChild,'over');
+	myId.onclick = function(ev){
+		var target = delegate(ev);
+		if(upperCase(target,"img")){
+			removeCss(myId,'over');
+			addClass(target.parentNode.parentNode,'over');
+			getid(name).src = target.parentNode.href;
+			stopDefault(ev);
+		}
+	};
+}
+function clean(elem){//清空空白节点
+	var n = elem.firstChild,next;
+	while(n){
+		next = n.nextSibling;
+		if(n.nodeName == "#text" && !/\S/.test(n.nodeValue)){
+			elem.removeChild(n);
+		}
+		n = next;
+	}
+}
+function removeCss(ele,cls){
+	var n = ele.firstChild;
+	for(;n;n = n.nextSibling){
+    	if(hasClass(n,cls)){
+			removeClass(n,cls);
+			break;
+    	}
+	}
+}
+function upperCase(e,tag){
+	return e.nodeName.toLowerCase() == tag;
+}
+function delegate(e){//事件捕捉
+	var e = e || window.event;
+	return e.target || e.srcElement;
+}
+function hasClass(ele,cls){//判断className
+	return ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+}
+function addClass(ele,className){//添加className
+	!this.hasClass(ele,className)?ele.className += " "+className:'';
+}
+function removeClass(ele,cls){//删除className
+	hasClass(ele,cls)?ele.className = ele.className.replace(new RegExp('(\\s|^)'+cls+'(\\s|$)'),' '):'';
+}
+function stopDefault(e){//阻止浏览器的默认行为 
+	e&&e.preventDefault?e.preventDefault():window.event.returnValue = false;
+}
+function getid(id){
+	return document.getElementById(id);
+}
+function addDOMLoadEvent(func) {
+    if (!window.__load_events) {
+       var init = function () {
+           // quit if this function has already been called
+           if (arguments.callee.done) return;
+           // flag this function so we don't do the same thing twice
+           arguments.callee.done = true;
+           // kill the timer
+           if (window.__load_timer) {
+               clearInterval(window.__load_timer);
+               window.__load_timer = null;
+           }
+           // execute each function in the stack in the order they were added
+           for (var i=0;i < window.__load_events.length;i++) {
+              window.__load_events[i]();
+           }
+           window.__load_events = null;
+       };
+       // for Mozilla/Opera9
+       if (document.addEventListener) {
+           document.addEventListener("DOMContentLoaded", init, false);
+       }
+      
+       // for Internet Explorer
+       /*@cc_on @*/
+       /*@if (@_win32)
+           document.write("<scr"+"ipt id=__ie_onload defer src=//0><\/scr"+"ipt>");
+           var script = document.getElementById("__ie_onload");
+           script.onreadystatechange = function() {
+               if (this.readyState == "complete") {
+                   init(); // call the onload handler
+               }
+           };
+       /*@end @*/
+      
+       // for Safari
+       if (/WebKit/i.test(navigator.userAgent)) { // sniff
+           window.__load_timer = setInterval(function() {
+               if (/loaded|complete/.test(document.readyState)) {
+                   init(); // call the onload handler
+               }
+           }, 10);
+       }
+       // for other browsers
+       window.onload = init;
+       // create event function stack
+       window.__load_events = [];
+    }
+    // add function to event stack
+    window.__load_events.push(func);
+}
+</script>
+</body>
+</html>
